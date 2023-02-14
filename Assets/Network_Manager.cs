@@ -75,7 +75,7 @@ public class Network_Manager : MonoBehaviour
             writer.WriteLine("0" + "/" + nick + "/" + password);
             writer.Flush();
         }
-        catch(Exception ex)
+        catch(Exception)
         {
             connected = false;
         }
