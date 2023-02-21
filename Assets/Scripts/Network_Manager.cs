@@ -53,14 +53,53 @@ public class Network_Manager : MonoBehaviour
 
     private void ManageData(string data)
     {
-        if(data == "Ping")
-        {
-            Debug.Log("Ping");
-            writer.WriteLine("1" + "/" + "Pong");
-        }
-    }
-        
+        string[] parameters = data.Split('/');
 
+        Debug.Log(data);
+        switch (parameters[0])
+        {
+            //Login 
+            case "0":
+                break;
+
+            // Ping
+            case "1":
+                ConnectToServer(ServerConnectionType.PING, new string[1]);
+
+
+                break;
+
+            //Register
+            case "2":
+                break;
+
+            //GetData
+            case "3":
+                GameManager._GAME_MANAGER.UpdateGameData(parameters[1]);
+                break;
+
+            //Version Control
+            case "4":
+                GameManager._GAME_MANAGER.SetVersion(float.Parse( parameters[1] ));
+                break;
+
+
+        }
+
+       
+    }
+
+    public void UpdateGameDataRequest()
+    {
+        ConnectToServer(ServerConnectionType.GAMEDATA, new string[1]);
+    }
+
+    public void GetLatestVersionRequest()
+    {
+
+        ConnectToServer(ServerConnectionType.VERSION, new string[1]);
+    }
+    
     public void ConnectToServer(ServerConnectionType conn, string[] parameters)
     {
         try
@@ -78,9 +117,10 @@ public class Network_Manager : MonoBehaviour
             switch (conn)
             {
                 case ServerConnectionType.LOGIN:
+
                     if (parameters.Length != 2) {
                         Debug.LogError("Parametros mal");
-                        return; }
+                        return ; }
 
                     writer.WriteLine("0" + "/" + parameters[0] + "/" + parameters[1]);
                     writer.Flush();
@@ -89,6 +129,7 @@ public class Network_Manager : MonoBehaviour
 
 
                 case ServerConnectionType.PING:
+                    writer.WriteLine(ServerConnectionType.PING + "/" + "Pong");
                     break;
 
 
@@ -96,7 +137,7 @@ public class Network_Manager : MonoBehaviour
                     if (parameters.Length != 2)
                     {
                         Debug.LogError("Parametros mal");
-                        return;
+                        return ;
                     }
 
                     Debug.Log("Trying to register");
@@ -110,7 +151,10 @@ public class Network_Manager : MonoBehaviour
                     writer.WriteLine((int)ServerConnectionType.GAMEDATA + "/");
                     writer.Flush();
                     break;
+
                 case ServerConnectionType.VERSION:
+                    writer.WriteLine((int)ServerConnectionType.VERSION + "/");
+                    writer.Flush();
                     break;
                 default:
 
