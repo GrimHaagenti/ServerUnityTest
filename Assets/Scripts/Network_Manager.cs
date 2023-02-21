@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.IO;
 using System;
 
+public enum ServerConnectionType {LOGIN, PING, REGISTER, GAMEDATA, VERSION }
 
 public class Network_Manager : MonoBehaviour
 {
@@ -16,7 +17,9 @@ public class Network_Manager : MonoBehaviour
     private StreamWriter writer;
     private StreamReader reader;
 
-    const string host = "10.40.3.70";
+
+    //const string host = "10.40.3.70";
+    const string host = "localhost";
     const int port = 6543;
 
     private bool connected = false;
@@ -56,9 +59,9 @@ public class Network_Manager : MonoBehaviour
             writer.WriteLine("1" + "/" + "Pong");
         }
     }
+        
 
-
-    public void ConnectToServer(string nick, string password)
+    public void ConnectToServer(ServerConnectionType conn, string[] parameters)
     {
         try
         {
@@ -72,10 +75,51 @@ public class Network_Manager : MonoBehaviour
             writer = new StreamWriter(stream);
             reader = new StreamReader(stream);
 
-            writer.WriteLine("0" + "/" + nick + "/" + password);
-            writer.Flush();
+            switch (conn)
+            {
+                case ServerConnectionType.LOGIN:
+                    if (parameters.Length != 2) {
+                        Debug.LogError("Parametros mal");
+                        return; }
+
+                    writer.WriteLine("0" + "/" + parameters[0] + "/" + parameters[1]);
+                    writer.Flush();
+                    break;
+
+
+
+                case ServerConnectionType.PING:
+                    break;
+
+
+                case ServerConnectionType.REGISTER:
+                    if (parameters.Length != 2)
+                    {
+                        Debug.LogError("Parametros mal");
+                        return;
+                    }
+
+                    Debug.Log("Trying to register");
+                    writer.WriteLine((int)ServerConnectionType.REGISTER + "/" + parameters[0] + "/" + parameters[1]);
+                    writer.Flush();
+                    break;
+
+
+
+                case ServerConnectionType.GAMEDATA:
+                    writer.WriteLine((int)ServerConnectionType.GAMEDATA + "/");
+                    writer.Flush();
+                    break;
+                case ServerConnectionType.VERSION:
+                    break;
+                default:
+
+                    break;
+            }
+
+            
         }
-        catch(Exception)
+        catch (Exception)
         {
             connected = false;
         }

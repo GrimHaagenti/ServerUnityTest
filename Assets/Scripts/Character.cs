@@ -9,15 +9,21 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     [Header("Stats")]
     [SerializeField]
     private float speed = 100f;
-
     [SerializeField]
     private float jumpForce = 200f;
 
+    [Header("Is Online Switch")]
+    [SerializeField]
+    private bool isOnline = false;
+
+    [Header("To be replaced - projectile")]
+    [SerializeField]
+    private GameObject projectile;
+
     private Rigidbody2D rb;
+    private PhotonView pv;
 
     private float desiredMovementAxis = 0f;
-
-    private PhotonView pv;
     private Vector3 enemyPosition = Vector3.zero; 
 
     private void Awake()
@@ -37,7 +43,10 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
         }
         else
         {
-            SmoothReplicate();
+            if (isOnline)
+            {
+                SmoothReplicate();
+            }
         }
     }
 
@@ -67,20 +76,29 @@ public class Character : MonoBehaviourPunCallbacks, IPunObservable
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
 
-        if (stream.IsWriting)
+        if (isOnline)
         {
-            stream.SendNext(transform.position);
+            if (stream.IsWriting)
+            {
+                stream.SendNext(transform.position);
+            }
+            else if (stream.IsReading)
+            {
+                enemyPosition = (Vector3)stream.ReceiveNext();
+            }
         }
-        else if (stream.IsReading)
-        {
-            enemyPosition = (Vector3)stream.ReceiveNext();
-        }
-
     }
 
     public void McShooty()
     {
-        PhotonNetwork.Instantiate("Bullet", transform.position + new Vector3(1f, 0f, 0f), Quaternion.identity);
+        if (isOnline)
+        {
+            PhotonNetwork.Instantiate("Bullet", transform.position + new Vector3(1f, 0f, 0f), Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(projectile, transform.position + new Vector3(1f, 0f, 0f), Quaternion.identity);
+        }
     }
 
 

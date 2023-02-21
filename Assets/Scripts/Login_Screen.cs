@@ -10,7 +10,7 @@ public class Login_Screen : MonoBehaviour
     [SerializeField] private TMP_InputField loginText;
     [SerializeField] private TMP_InputField passwordText;
 
-    private void Awake()
+    private void Start()
     {
         loginButton.onClick.AddListener(SendLogin);
     }
@@ -18,7 +18,12 @@ public class Login_Screen : MonoBehaviour
 
     private void SendLogin()
     {
-        Network_Manager._NETWORK_MANAGER.ConnectToServer(loginText.text, passwordText.text);
+        string[] login = new string[2];
+        login[0] = loginText.text;
+        login[1] = passwordText.text;
+
+
+        Network_Manager._NETWORK_MANAGER.ConnectToServer( ServerConnectionType.LOGIN,login);
     }
 
 }
