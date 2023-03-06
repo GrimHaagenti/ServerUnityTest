@@ -8,4 +8,5 @@ public class GameData
 {
     public float version;
     public List<Race> races;
+    public List<PlayerCharacter> playerCharacters;
 }

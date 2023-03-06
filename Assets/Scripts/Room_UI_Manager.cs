@@ -28,11 +28,11 @@ public class Room_UI_Manager : MonoBehaviour
 
     private void CreateRoom()
     {
-        Photon_Manager._PHOTON_MANAGER.CreateRoom(createText.text.ToString());
+        Photon_Manager._PHOTON_MANAGER.CreateRoom(createText.text.ToString(),GameManager._GAME_MANAGER.currentRace);
     }
     private void JoinRoom()
     {
-        Photon_Manager._PHOTON_MANAGER.JoinRoom(JoinText.text.ToString());
+        Photon_Manager._PHOTON_MANAGER.JoinRoom(JoinText.text.ToString(), GameManager._GAME_MANAGER.currentRace);
     }
 
 

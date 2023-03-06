@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
+public enum RacesNames { SKELETON, HUMAN, ORC}
 public class Race
 {
+    public int id_race;
     public int max_hp;
     public int speed;
     public int jump_force;

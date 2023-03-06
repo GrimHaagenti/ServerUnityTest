@@ -38,6 +38,8 @@ MonoBehaviour:
   - DestroyRpc
   - NetworkDestroy
   - NetworkDie
+  - NetworkDamage
+  - NetworkSendToLobby
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

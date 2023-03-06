@@ -3,30 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class WeaponPickup : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 10f;
-    private Rigidbody2D rb;
+    private Weapon weaponToPick;
 
     private PhotonView pv;
+    public Weapon PickWeapon { get { return weaponToPick; } }
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         pv = GetComponent<PhotonView>();
-    }
-
-
-    private void Start()
-    {
-        rb.velocity = new Vector2(speed, 0);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        pv.RPC("NetworkDestroy", RpcTarget.All);
+        if (collision.gameObject.TryGetComponent<Character>(out Character chara))
+        {
+            pv.RPC("NetworkDestroy", RpcTarget.All);
+        }
     }
+
 
     [PunRPC]
     public void NetworkDestroy()

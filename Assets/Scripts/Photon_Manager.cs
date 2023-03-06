@@ -8,6 +8,8 @@ public class Photon_Manager : MonoBehaviourPunCallbacks
 {
     public static Photon_Manager _PHOTON_MANAGER;
 
+    public int player1raceID = -1;
+    public int player2raceID = -1;
     private void Awake()
     {
 
@@ -58,15 +60,18 @@ public class Photon_Manager : MonoBehaviourPunCallbacks
         Debug.Log("Accediendo al lobby");
     }
 
-    public void CreateRoom(string roomName)
+    public void CreateRoom(string roomName, int p1RaceID)
     {
         PhotonNetwork.CreateRoom(roomName, new RoomOptions{ MaxPlayers = 2} );
+        player1raceID = p1RaceID;
+        Debug.Log("Room Created");
     }
 
 
-    public void JoinRoom(string nameRoom)
+    public void JoinRoom(string nameRoom, int p2RaceID)
     {
-        PhotonNetwork.JoinRoom(nameRoom);
+        PhotonNetwork.JoinRoom(nameRoom) ;
+        player2raceID = p2RaceID;
     }
 
 
@@ -86,7 +91,7 @@ public class Photon_Manager : MonoBehaviourPunCallbacks
 
         if(PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers && PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel("Game");
+            PhotonNetwork.LoadLevel("Gameplay");
         }
 
     }

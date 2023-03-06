@@ -33,11 +33,21 @@ public class Network_Manager : MonoBehaviour
         else
         {
             _NETWORK_MANAGER = this;
+            socket = new TcpClient(host, port);
+
+            //almacenamiento el canal de envío y recepción de datos
+            stream = socket.GetStream();
+
+            connected = true;
+            writer = new StreamWriter(stream);
+            reader = new StreamReader(stream);
+
             DontDestroyOnLoad(gameObject);
         }
     }
     private void Update()
     {
+        Debug.Log("Connected: " + connected);
         if (connected)
         {
             if (stream.DataAvailable)
@@ -45,9 +55,12 @@ public class Network_Manager : MonoBehaviour
                 string data = reader.ReadLine();
                 if(data != null)
                 {
+                    
                     ManageData(data);
+
                 }
             }
+                
         }
     }
 
@@ -60,17 +73,20 @@ public class Network_Manager : MonoBehaviour
         {
             //Login 
             case "0":
+                GameManager._GAME_MANAGER.ManageLogin(int.Parse(parameters[1]));
                 break;
 
             // Ping
+            default:
             case "1":
+                Debug.Log("Received PING");
                 ConnectToServer(ServerConnectionType.PING, new string[1]);
-
 
                 break;
 
             //Register
             case "2":
+                GameManager._GAME_MANAGER.ManageRegister(int.Parse(parameters[1]));
                 break;
 
             //GetData
@@ -85,8 +101,8 @@ public class Network_Manager : MonoBehaviour
 
 
         }
+        
 
-       
     }
 
     public void UpdateGameDataRequest()
@@ -105,15 +121,7 @@ public class Network_Manager : MonoBehaviour
         try
         {
             //Conexión con el servidor
-            socket = new TcpClient(host, port);
-
-            //almacenamiento el canal de envío y recepción de datos
-            stream = socket.GetStream();
-
-            connected = true;
-            writer = new StreamWriter(stream);
-            reader = new StreamReader(stream);
-
+            
             switch (conn)
             {
                 case ServerConnectionType.LOGIN:
@@ -122,14 +130,17 @@ public class Network_Manager : MonoBehaviour
                         Debug.LogError("Parametros mal");
                         return ; }
 
-                    writer.WriteLine("0" + "/" + parameters[0] + "/" + parameters[1]);
+                    Debug.Log("Trying to login");
+                    writer.WriteLine((int)ServerConnectionType.LOGIN + "/" + parameters[0] + "/" + parameters[1]);
                     writer.Flush();
                     break;
 
 
 
                 case ServerConnectionType.PING:
-                    writer.WriteLine(ServerConnectionType.PING + "/" + "Pong");
+                    Debug.Log("Sending PONG");
+                    writer.WriteLine((int)ServerConnectionType.PING + "/" + "Pong");
+                    writer.Flush();
                     break;
 
 
